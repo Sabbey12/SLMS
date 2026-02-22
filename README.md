@@ -10,4 +10,4 @@ This phase defines the SLMS planning including:
 - Continuous Integration Rules
 
 Full report:
-[View full report] (Assignment Part 1 Group3.pdf)
+[View full report](Assignment Part 1 Group3.pdf)
