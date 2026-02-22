@@ -8,3 +8,6 @@ This phase defines the SLMS planning including:
 - Coding Standards
 - Naming Conventions
 - Continuous Integration Rules
+
+Full report:
+[View full report] (Assignment Part 1 Group3.pdf)
