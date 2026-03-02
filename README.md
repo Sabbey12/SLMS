@@ -1,13 +1,5 @@
-## Pre-set Software Construction
+## Project Description
 
-This phase defines the SLMS planning including:
+This project is a Student Learning Management System (SLMS) Course Profile Module developed for CSEB5223 Software Construction & Methods.
 
-- Use Case Diagram
-- Class Diagram
-- Documentation Formatting
-- Coding Standards
-- Naming Conventions
-- Continuous Integration Rules
-
-Full report:
-[View Full Report](Assignment%20Part%201%20Group3.pdf)
+The system allows users to manually input course profile data, search, edit, delete, and display course information using a console-based interface.
