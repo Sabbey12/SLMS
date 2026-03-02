@@ -174,8 +174,11 @@ class CourseManager {
             System.out.print("Confirm deletion? (Y/N): ");
             String confirm = sc.nextLine();
             if (confirm.equalsIgnoreCase("Y")) {
-                courses.remove(index);
-                System.out.println("Course deleted successfully!");
+               courses.remove(index);
+            System.out.println("Course deleted successfully!");
+
+            // Display all courses after deletion
+            viewAllCourses();
             } else {
                 System.out.println("Deletion cancelled.");
             }
