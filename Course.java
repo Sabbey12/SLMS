@@ -7,24 +7,27 @@ public class Course {
     private String teamsLink;
 
     // Constructor
-    public Course(String courseName, String courseCode,
-                  int creditHour, String summary,
-                  String teamsLink) {
+    public Course(String name,
+    String code,
+    int credit,
+    String summary,
+    String link){
 
-        this.courseName = courseName;
-        this.courseCode = courseCode;
-        this.creditHour = creditHour;
-        this.summary = summary;
-        this.teamsLink = teamsLink;
+        this.courseName=name;
+        this.courseCode=code;
+        this.creditHour=credit;
+        this.summary=summary;
+        this.teamsLink=link;
+
     }
 
     // Getter
-    public String getCourseCode(){
-        return courseCode;
-    }
-
     public String getCourseName(){
         return courseName;
+    }
+
+    public String getCourseCode(){
+        return courseCode;
     }
 
     public int getCreditHour(){
@@ -39,21 +42,26 @@ public class Course {
         return teamsLink;
     }
 
-    // Setter (course code cannot change)
-    public void setCourseName(String name){
-        this.courseName = name;
+    // Setter
+    public void setCourseName(
+    String name){
+
+        courseName=name;
+
     }
 
-    public void setCreditHour(int hour){
-        this.creditHour = hour;
+    public void setCreditHour(
+    int credit){
+
+        creditHour=credit;
+
     }
 
-    public void setSummary(String summary){
-        this.summary = summary;
-    }
+    public void setSummary(
+    String summary){
 
-    public void setTeamsLink(String link){
-        this.teamsLink = link;
+        this.summary=summary;
+
     }
 
 }
