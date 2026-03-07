@@ -5,6 +5,8 @@
  * Date: 02 Mar 2026
  */
 
+package com.mycompany.courseprofilesystem;
+
 public class Course {
     // Attributes
     private String courseName;
