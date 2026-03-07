@@ -5,6 +5,8 @@
  * Features: Add, Search, Edit, Delete, View All courses.
  */
 
+package com.mycompany.courseprofilesystem;
+
 import java.util.ArrayList;
 import java.util.Scanner;
 
