@@ -7,6 +7,13 @@
 
 package com.mycompany.courseprofilesystem;
 
+/**
+ * Class: Course
+ * Description: Represents a course profile in the SLMS system.
+ * Stores course information such as name, code, credit hour, summary,
+ * and MS Teams link.
+ */
+
 public class Course {
     // Attributes
     private String courseName;
@@ -41,11 +48,11 @@ public class Course {
 
     // Display all course attributes
     public void displayCourse() {
-        System.out.println("Course Name     : " + courseName);
-        System.out.println("Course Code     : " + courseCode);
-        System.out.println("Credit Hour     : " + creditHour);
-        System.out.println("Summary         : " + summary);
-        System.out.println("MS Teams Link   : " + msTeamsLink);
+        System.out.println("Course Name  : " + courseName);
+        System.out.println("Course Code  : " + courseCode);
+        System.out.println("Credit Hour  : " + creditHour);
+        System.out.println("Summary      : " + summary);
+        System.out.println("MS Teams Link: " + msTeamsLink);
         System.out.println("--------------------------------------");
     }
 }
