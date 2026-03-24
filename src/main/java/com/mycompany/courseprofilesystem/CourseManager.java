@@ -237,7 +237,6 @@ class CourseManager {
             if (confirm.equalsIgnoreCase("Y")) {
                 courses.remove(index); // Remove from list
                 System.out.println("Course deleted successfully!");
-                viewAllCourses(); // Show updated list
             } else {
                 System.out.println("Deletion cancelled.");
             }
