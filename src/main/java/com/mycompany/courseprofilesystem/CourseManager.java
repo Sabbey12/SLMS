@@ -143,9 +143,14 @@ class CourseManager {
         System.out.print("Enter MS Teams Link: ");
         String link = sc.nextLine();
 
-        // Add new Course object to courses list
-        courses.add(new Course(name, code, credit, summary, link));
-        System.out.println("Course added successfully!");
+        // Validate all inputs at once
+        if (name.isBlank() || code.isBlank() || credit.isBlank() || summary.isBlank() || link.isBlank()) {
+            System.out.println("Course not added! All fields must be filled.");
+        } else {
+            // Only add if all fields are valid
+            courses.add(new Course(name, code, credit, summary, link));
+            System.out.println("Course added successfully!");
+        }
     }
 
     /**
