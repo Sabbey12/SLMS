@@ -47,7 +47,7 @@ class CourseManager {
      * 
      * This is the main menu loop. It uses a do-while loop.
      * 
-     * Why do-while?
+     * Why use do-while?
      * - Ensures menu displays at least once before checking exit.
      * - Loop continues until user chooses 0 (Exit).
      */
@@ -72,7 +72,7 @@ class CourseManager {
             /**
              * Input validation using while loop.
              * - Checks if the user entered an integer.
-             * - If input is invalid (like letters), prompt again.
+             * - If input is invalid (like letters), the user need to prompt again.
              * - sc.next() clears the invalid input.
              */
             while (!sc.hasNextInt()) {
@@ -102,8 +102,8 @@ class CourseManager {
     }
 
     /**
-     * Method: addCourse
-     * Adds a new course after validating input.
+     * Method: addCourse()
+     * Adds a new course after valid inputs.
      */
     private void addCourse() {
         System.out.print("Enter Course Name: ");
@@ -118,12 +118,12 @@ class CourseManager {
 
             // findCourseIndex() searches if code already exists
             if (findCourseIndex(code) != -1) {
-                System.out.println("Course code already exists! Enter a unique code.");
-            } else break; // Exit loop when unique
+                System.out.println("Course code already exists! Enter another unique code.");
+            } else break; // Exit loop when course code is unique
         }
 
         int credit;
-        // Validate credit input: integer and > 0
+        // Validate credit hour input: integer and > 0
         while (true) {
             System.out.print("Enter Credit Hour: ");
             if (sc.hasNextInt()) {
@@ -149,7 +149,7 @@ class CourseManager {
     }
 
     /**
-     * Method: searchCourse
+     * Method: searchCourse()
      * Search for a course by course code.
      */
     private void searchCourse() {
@@ -167,7 +167,7 @@ class CourseManager {
     }
 
     /**
-     * Method: editCourse
+     * Method: editCourse()
      * Edit existing course details (except code).
      */
     private void editCourse() {
@@ -183,6 +183,7 @@ class CourseManager {
             c.setCourseName(sc.nextLine());
 
             int credit;
+            // Validate input to new credit hour: integer and > 0
             while (true) {
                 System.out.print("New Credit Hour: ");
                 if (sc.hasNextInt()) {
@@ -211,19 +212,21 @@ class CourseManager {
     }
 
     /**
-     * Method: deleteCourse
-     * Deletes a course after confirmation.
+     * Method: deleteCourse()
+     * Deletes a course after confirmation by the user.
      */
     private void deleteCourse() {
         System.out.print("Enter Course Code to delete: ");
         String code = sc.nextLine();
         int index = findCourseIndex(code);
 
+        //check if the course code entered exists or not.
         if (index != -1) {
             Course c = courses.get(index);
             System.out.println("Course found:");
             c.displayCourse();
 
+            //confirmation to user to delete, must be (y/Y) to delete
             System.out.print("Confirm deletion? (Y/N): ");
             String confirm = sc.nextLine();
             if (confirm.equalsIgnoreCase("Y")) {
@@ -239,10 +242,14 @@ class CourseManager {
     }
 
     /**
-     * Method: viewAllCourses
+     * Method: viewAllCourses()
      * Displays all courses in the system.
      */
     private void viewAllCourses() {
+        /**check for all courses created and courses available in the database.
+        * if empty/none available, display the following message
+        * if courses exists, display all courses created.
+        */
         if (courses.isEmpty()) {
             System.out.println("No courses available.");
         } else {
@@ -254,7 +261,7 @@ class CourseManager {
     }
 
     /**
-     * Method: findCourseIndex
+     * Method: findCourseIndex()
      * Searches course list for a code. Returns index or -1 if not found.
      */
     private int findCourseIndex(String code) {
@@ -307,7 +314,7 @@ class CourseManager {
      * Method: searchStudent()
      * Description: Search student by ID
      * - Uses findStudentIndex()
-     * - Display info if found
+     * - Display the student's information if found
      */
     private void searchStudent() {
         System.out.print("Enter Student ID to search: ");
@@ -317,15 +324,15 @@ class CourseManager {
 
         if (index != -1) {
             System.out.println("Student found:");
-            students.get(index).displayStudent(); // Show student details
+            students.get(index).displayStudent(); // display student details
         } else {
             System.out.println("Student not found."); // not found
         }
     }
   /**
      * Method: editStudent()
-     * - Updates student info by ID
-     * - Prompts user for new data
+     * - Updates student information by ID
+     * - Prompts user to enter new data
      * - Ensures correct student is updated using index
      */
     private void editStudent() {
@@ -334,6 +341,7 @@ class CourseManager {
 
         int index = findStudentIndex(id);
 
+        //if id entered exists in database, proceed to update student details
         if (index != -1) {
             Student s = students.get(index);
 
@@ -352,6 +360,7 @@ class CourseManager {
             System.out.println("Student updated successfully.");
             s.displayStudent();
         } else {
+            //if id entered does not exists, display the error message
             System.out.println("Student not found.");
         }
     }
@@ -369,11 +378,13 @@ class CourseManager {
 
         int index = findStudentIndex(id);
 
+        //if id entered exists in database, proceed to update student details
         if (index != -1) {
             Student s = students.get(index);
             System.out.println("Student found:");
-            s.displayStudent(); // show info before deletion
+            s.displayStudent(); // display student's information before deletion
 
+            //ask confirmation from user to delete, must be (y/Y)
             System.out.print("Confirm deletion? (Y/N): ");
             String confirm = sc.nextLine();
 
@@ -385,6 +396,7 @@ class CourseManager {
                 System.out.println("Deletion cancelled.");
             }
         } else {
+            //if id entered does not exists, display the error message
             System.out.println("Student not found.");
         }
     }
@@ -395,6 +407,10 @@ class CourseManager {
      * - Checks if list is empty first
      */
     private void viewAllStudents() {
+        /**check for all students available in the database.
+        * if empty/none available, display the following message
+        * if students exists, display all students' information.
+        */
         if (students.isEmpty()) {
             System.out.println("No students available.");
         } else {
@@ -416,7 +432,7 @@ class CourseManager {
         for (int i = 0; i < students.size(); i++) {
             // equalsIgnoreCase: allows case-insensitive comparison
             if (students.get(i).getStudentID().equalsIgnoreCase(id)) {
-                return i; // Student found
+                return i; // student found, display student's information
             }
         }
         // -1 indicates student not found
