@@ -144,7 +144,7 @@ class CourseManager {
         String link = sc.nextLine();
 
         // Validate all inputs at once
-        if (name.isBlank() || code.isBlank() || credit.isBlank() || summary.isBlank() || link.isBlank()) {
+        if (name.isBlank() || code.isBlank() || summary.isBlank() || link.isBlank()) {
             System.out.println("Course not added! All fields must be filled.");
         } else {
             // Only add if all fields are valid
