@@ -12,7 +12,7 @@ package com.mycompany.courseprofilesystem;
  * Description:
  * This class represents a Student object in the SLMS system.
  * 
- * Each student has attributes:
+ * Each student has all these attributes:
  * - studentID: unique identifier (cannot be edited)
  * - firstName
  * - lastName
@@ -27,7 +27,7 @@ package com.mycompany.courseprofilesystem;
  */
 public class Student {
 
-    // Attributes
+    // Student's attributes
     private String studentID;   // Unique student identifier, cannot be changed after creation
     private String firstName;   // Student's first name
     private String lastName;    // Student's last name
