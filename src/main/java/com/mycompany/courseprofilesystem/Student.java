@@ -1,5 +1,5 @@
 /**
- * File: Course.java
+ * File: Student.java
  * Author: Team SLMS (Group 3)
  * Description: Handles individual student data and provides methods to display it.
  * Date: 17 Mar 2026
