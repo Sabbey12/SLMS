@@ -15,14 +15,14 @@ package com.mycompany.courseprofilesystem;
  */
 
 public class Course {
-    // Attributes
+    // Attributes available in the course
     private String courseName;
     private String courseCode; // cannot be edited after creation
     private int creditHour;
     private String summary;
     private String msTeamsLink;
 
-    // Constructor
+    // Constructor for the course
     public Course(String courseName, String courseCode, int creditHour, String summary, String msTeamsLink) {
         this.courseName = courseName;
         this.courseCode = courseCode;
@@ -31,7 +31,7 @@ public class Course {
         this.msTeamsLink = msTeamsLink;
     }
 
-    // Getters and Setters
+    // Getters and Setters for the required course's attributes
     public String getCourseName() { return courseName; }
     public void setCourseName(String courseName) { this.courseName = courseName; }
 
@@ -46,7 +46,7 @@ public class Course {
     public String getMsTeamsLink() { return msTeamsLink; }
     public void setMsTeamsLink(String msTeamsLink) { this.msTeamsLink = msTeamsLink; }
 
-    // Display all course attributes
+    // Display all course's attributes
     public void displayCourse() {
         System.out.println("Course Name  : " + courseName);
         System.out.println("Course Code  : " + courseCode);
