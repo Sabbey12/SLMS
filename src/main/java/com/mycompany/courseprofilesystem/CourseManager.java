@@ -1,6 +1,6 @@
 /**
  * File: CourseManager.java
- * Author: Team SLMS (Group 3)
+ * Author: Team SLMS (Group 4)
  * Description: Main program to manage course profiles.
  * Features: Add, Search, Edit, Delete, View All courses.
  */
@@ -12,24 +12,45 @@ import java.util.Scanner;
 
 /**
  * Class: CourseManager
- * 
- * This class manages both Course Profile and Student Profile modules
- * in the SLMS (Student Learning Management System).
- * 
- * Users can:
- * - Add, search, edit, delete, and view courses
- * - Add, search, edit, delete, and view students
- * 
- * ArrayLists are used for dynamic storage of Course and Student objects.
- * Scanner is used for user input.
+ *
+ * This class acts as the main controller for the Student Learning Management System (SLMS).
+ *
+ * It manages:
+ * - Course data (add, edit, delete, search, view)
+ * - Student data (add, edit, delete, search, view)
+ * - Course–Student relationships (enrollment system)
+ *
+ * It also includes:
+ * - Input validation
+ * - Error handling for invalid operations
+ * - Simple caching system for search history
+ * - Auto-suggestion feature based on course data
+ *
+ * Data Structures Used:
+ * - ArrayList<Course> → stores all courses
+ * - ArrayList<Student> → stores all students
+ * - boolean[][] enrollment → stores relationship between students and courses
  */
-class CourseManager {
 
+
+class CourseManager {
+    // Stores last searched student ID (for history feature)
+    private String lastSearchedStudent = "";
+    // Stores last searched course code (for history feature)
+    private String lastSearchedCourse = "";
+    
     // ArrayList to store all courses. ArrayList allows dynamic resizing.
     private ArrayList<Course> courses = new ArrayList<>();
 
     // ArrayList to store all students. Dynamic insertion and deletion possible.
     private ArrayList<Student> students = new ArrayList<>();
+    
+    // Stores search history for API caching feature
+    private ArrayList<String> searchCache = new ArrayList<>();
+    
+    /// Relationship matrix:
+// enrollment[studentIndex][courseIndex] = true if student is enrolled
+private boolean[][] enrollment = new boolean[100][100];
 
     // Scanner to get user input
     private Scanner sc = new Scanner(System.in);
@@ -42,15 +63,17 @@ class CourseManager {
         manager.run();  // Start the interactive menu
     }
 
-    /**
-     * Method: run()
-     * 
-     * This is the main menu loop. It uses a do-while loop.
-     * 
-     * Why use do-while?
-     * - Ensures menu displays at least once before checking exit.
-     * - Loop continues until user chooses 0 (Exit).
-     */
+   /**
+ * Main menu loop of the system.
+ *
+ * This method:
+ * - Displays menu options
+ * - Takes user input
+ * - Calls corresponding functions using switch-case
+ * - Repeats until user selects exit (0)
+ *
+ * It also includes input validation to prevent invalid menu selection.
+ */
     public void run() {
         int choice;
         do {
@@ -66,8 +89,15 @@ class CourseManager {
             System.out.println("8. Edit Student");
             System.out.println("9. Delete Student");
             System.out.println("10. View All Students");
+             System.out.println("11. Assign Course to Student");
+            System.out.println("12. View Student Courses");
+            System.out.println("13. View Course Students");
+            System.out.println("14. Suggest Last Search");
+            System.out.println("15. Auto Suggest Search");
             System.out.println("0. Exit");
+            
             System.out.print("Choose an option: ");
+          
 
             /**
              * Input validation using while loop.
@@ -94,6 +124,15 @@ class CourseManager {
                 case 8: editStudent(); break;
                 case 9: deleteStudent(); break;
                 case 10: viewAllStudents(); break;
+                case 11: assignCourseToStudent(); break;
+                case 12: listCoursesByStudent(); break;
+                case 13: listStudentsByCourse(); break;
+                case 14: suggestLastSearch(); break;
+                case 15:
+                System.out.print("Enter keyword: ");
+                String input = sc.nextLine();
+                autoSuggest(input);
+                break;
                 case 0: System.out.println("Exiting program."); break;
                 default: System.out.println("Invalid choice!");
             }
@@ -103,8 +142,16 @@ class CourseManager {
 
     /**
      * Method: addCourse()
-     * Adds a new course after valid inputs.
-     */
+    /**
+ * Adds a new course into the system.
+ *
+ * Steps:
+ * - Get course details from user
+ * - Validate input (no empty fields)
+ * - Ensure course code is unique
+ * - Store Course object in ArrayList
+ */
+    
     private void addCourse() {
         System.out.print("Enter Course Name: ");
         String name = sc.nextLine();
@@ -155,11 +202,20 @@ class CourseManager {
 
     /**
      * Method: searchCourse()
-     * Search for a course by course code.
-     */
+    /**
+ * Searches a course using course code.
+ *
+ * Features:
+ * - Stores search history (cache)
+ * - Updates last searched course
+ * - Displays course details if found
+ * - Shows error if not found
+ */
     private void searchCourse() {
         System.out.print("Enter Course Code to search: ");
         String code = sc.nextLine();
+        lastSearchedCourse = code;
+        searchCache.add("Course: " + code);
 
         int index = findCourseIndex(code);
 
@@ -173,8 +229,13 @@ class CourseManager {
 
     /**
      * Method: editCourse()
-     * Edit existing course details (except code).
-     */
+ * Edits existing course information (except course code).
+ *
+ * Steps:
+ * - Find course by code
+ * - Update course name, credit hour, summary, and link
+ * - Validate numeric input for credit hour
+ */
     private void editCourse() {
         System.out.print("Enter Course Code to edit: ");
         String code = sc.nextLine();
@@ -218,37 +279,61 @@ class CourseManager {
 
     /**
      * Method: deleteCourse()
-     * Deletes a course after confirmation by the user.
-     */
+     * Deletes a course from the system.
+ *
+ * Steps:
+ * - Find course by code
+ * - Confirm deletion from user
+ * - Remove course from ArrayList
+ * - Clear all student-course relationships
+ */
+    
     private void deleteCourse() {
-        System.out.print("Enter Course Code to delete: ");
-        String code = sc.nextLine();
-        int index = findCourseIndex(code);
+    System.out.print("Enter Course Code to delete: ");
+    String code = sc.nextLine();
+    int index = findCourseIndex(code);
 
-        //check if the course code entered exists or not.
-        if (index != -1) {
-            Course c = courses.get(index);
-            System.out.println("Course found:");
-            c.displayCourse();
+    if (index != -1) {
 
-            //confirmation to user to delete, must be (y/Y) to delete
-            System.out.print("Confirm deletion? (Y/N): ");
-            String confirm = sc.nextLine();
-            if (confirm.equalsIgnoreCase("Y")) {
-                courses.remove(index); // Remove from list
-                System.out.println("Course deleted successfully!");
-            } else {
-                System.out.println("Deletion cancelled.");
+        System.out.println("Course found:");
+        courses.get(index).displayCourse();
+
+        System.out.print("Confirm deletion? (Y/N): ");
+        String confirm = sc.nextLine();
+        
+        // remove enrollment relationships first
+for (int i = 0; i < students.size(); i++) {
+    enrollment[i][index] = false;
+}
+
+        if (confirm.equalsIgnoreCase("Y")) {
+
+            // remove course
+            courses.remove(index);
+
+            // clear relationships (simple safe version)
+            for (int i = 0; i < students.size(); i++) {
+                for (int j = 0; j < courses.size(); j++) {
+                    enrollment[i][j] = false;
+                }
             }
-        } else {
-            System.out.println("Course not found.");
-        }
-    }
 
+            System.out.println("Course deleted successfully!");
+
+        } else {
+            System.out.println("Deletion cancelled.");
+        }
+
+    } else {
+        System.out.println("Course not found.");
+    }
+}
     /**
      * Method: viewAllCourses()
-     * Displays all courses in the system.
-     */
+ * Displays all courses in the system.
+ *
+ * If no courses exist, display appropriate message.
+ */
     private void viewAllCourses() {
         /**check for all courses created and courses available in the database.
         * if empty/none available, display the following message
@@ -266,8 +351,15 @@ class CourseManager {
 
     /**
      * Method: findCourseIndex()
-     * Searches course list for a code. Returns index or -1 if not found.
-     */
+      * Finds the index of a course in the ArrayList.
+ *
+ * Returns:
+ * - Index if found
+ * - -1 if not found
+ *
+ * Used for search, edit, delete operations.
+ */
+    
     private int findCourseIndex(String code) {
         for (int i = 0; i < courses.size(); i++) {
             // equalsIgnoreCase: ignores uppercase/lowercase differences
@@ -283,14 +375,24 @@ class CourseManager {
     
      /**
      * Method: addStudent()
-     * Description: Adds a new student to the system
-     * - Input all details from user
-     * - Stores Student object in ArrayList
-     */
+     * Adds a new student to the system.
+ *
+ * Steps:
+ * - Get student details from user
+ * - Check for duplicate student ID
+ * - Validate input fields
+ * - Store Student object in ArrayList
+ */
+    
     private void addStudent() {
     // Ask for all inputs first
     System.out.print("Enter Student ID: ");
     String id = sc.nextLine();
+    
+if (findStudentIndex(id) != -1) {
+    System.out.println("Error: Student ID already exists!");
+    return;
+}
 
     System.out.print("Enter First Name: ");
     String fname = sc.nextLine();
@@ -316,14 +418,19 @@ class CourseManager {
 
      /**
      * Method: searchStudent()
-     * Description: Search student by ID
-     * - Uses findStudentIndex()
-     * - Display the student's information if found
-     */
+     * Searches a student using student ID.
+ *
+ * Features:
+ * - Updates search history cache
+ * - Stores last searched student
+ * - Displays student details if found
+ */
     private void searchStudent() {
         System.out.print("Enter Student ID to search: ");
         String id = sc.nextLine();
-
+        lastSearchedStudent = id;
+        searchCache.add("Student: " + id);
+        
         int index = findStudentIndex(id); // search for student
 
         if (index != -1) {
@@ -335,10 +442,17 @@ class CourseManager {
     }
   /**
      * Method: editStudent()
-     * - Updates student information by ID
-     * - Prompts user to enter new data
-     * - Ensures correct student is updated using index
-     */
+     * Updates student information.
+ *
+ * Allows user to modify:
+ * - First name
+ * - Last name
+ * - Email
+ * - Phone number
+ *
+ * Student ID cannot be changed.
+ */
+    
     private void editStudent() {
         System.out.print("Enter Student ID to edit: ");
         String id = sc.nextLine();
@@ -371,45 +485,65 @@ class CourseManager {
 
     /**
      * Method: deleteStudent()
-     * - Find student index first
-     * - Confirm deletion
-     * - Remove from ArrayList
-     * - Display all students after deletion
-     */
+    * Deletes a student from the system.
+ *
+ * Steps:
+ * - Find student by ID
+ * - Confirm deletion
+ * - Remove student from ArrayList
+ * - Remove all course relationships
+ * - Shift enrollment matrix to maintain consistency
+ */
+    
     private void deleteStudent() {
-        System.out.print("Enter Student ID to delete: ");
-        String id = sc.nextLine();
+    System.out.print("Enter Student ID to delete: ");
+    String id = sc.nextLine();
 
-        int index = findStudentIndex(id);
+    int index = findStudentIndex(id);
 
-        //if id entered exists in database, proceed to update student details
-        if (index != -1) {
-            Student s = students.get(index);
-            System.out.println("Student found:");
-            s.displayStudent(); // display student's information before deletion
+    if (index != -1) {
+        Student s = students.get(index);
+        System.out.println("Student found:");
+        s.displayStudent();
 
-            //ask confirmation from user to delete, must be (y/Y)
-            System.out.print("Confirm deletion? (Y/N): ");
-            String confirm = sc.nextLine();
+        System.out.print("Confirm deletion? (Y/N): ");
+        String confirm = sc.nextLine();
 
-            if (confirm.equalsIgnoreCase("Y")) {
-                students.remove(index); // delete student
-                System.out.println("Student deleted successfully!");
-                viewAllStudents(); // Show updated list
-            } else {
-                System.out.println("Deletion cancelled.");
+        if (confirm.equalsIgnoreCase("Y")) {
+
+            // Clear relationships first
+            for (int j = 0; j < courses.size(); j++) {
+                enrollment[index][j] = false;
             }
-        } else {
-            //if id entered does not exists, display the error message
-            System.out.println("Student not found.");
-        }
-    }
 
+            students.remove(index);
+
+            // Shift enrollment data UP
+            for (int i = index; i < students.size(); i++) {
+                for (int j = 0; j < courses.size(); j++) {
+                    enrollment[i][j] = enrollment[i + 1][j];
+                }
+            }
+
+            System.out.println("Student deleted successfully!");
+            viewAllStudents();
+
+        } else {
+            System.out.println("Deletion cancelled.");
+        }
+
+    } else {
+        System.out.println("Student not found.");
+    }
+}
      /**
      * Method: viewAllStudents()
-     * - Loops through ArrayList and display each student
-     * - Checks if list is empty first
-     */
+    /**
+ * Displays all students in the system.
+ *
+ * If no students exist, show message.
+ */
+    
     private void viewAllStudents() {
         /**check for all students available in the database.
         * if empty/none available, display the following message
@@ -427,11 +561,15 @@ class CourseManager {
 
     /**
      * Method: findStudentIndex()
-     * - Returns index of student in ArrayList
-     * - Linear search
-     * - Returns -1 if not found
-     * - equalsIgnoreCase() to ignore case sensitivity in ID
-     */
+      * Finds a student index using student ID.
+ *
+ * Returns:
+ * - Index if found
+ * - -1 if not found
+ *
+ * Used for all student-related operations.
+ */
+    
     private int findStudentIndex(String id) {
         for (int i = 0; i < students.size(); i++) {
             // equalsIgnoreCase: allows case-insensitive comparison
@@ -442,4 +580,147 @@ class CourseManager {
         // -1 indicates student not found
         return -1;
     }
+    
+    /**
+     * Assigns a course to a student.
+ *
+ * Validation:
+ * - Student must exist
+ * - Course must exist
+ * - Student must not already be enrolled
+ *
+ * Updates enrollment matrix.
+ */
+   private void assignCourseToStudent() {
+    System.out.print("Enter Student ID: ");
+    String studentId = sc.nextLine();
+    int sIndex = findStudentIndex(studentId);
+
+    if (sIndex == -1) {
+        System.out.println("Error: Student not found.");
+        return;
+    }
+
+    System.out.print("Enter Course Code: ");
+    String courseCode = sc.nextLine();
+    int cIndex = findCourseIndex(courseCode);
+
+    if (cIndex == -1) {
+        System.out.println("Error: Course not found.");
+        return;
+    }
+
+    if (enrollment[sIndex][cIndex]) {
+        System.out.println("Error: Student already enrolled in this course.");
+        return;
+    }
+
+    // if NOT enrolled yet → assign
+    enrollment[sIndex][cIndex] = true;
+    System.out.println("Success: Course assigned to student.");
+}
+   
+   /**
+ * Displays all courses assigned to a specific student.
+ *
+ * If student has no courses, display message.
+ */
+    private void listCoursesByStudent() {
+    System.out.print("Enter Student ID: ");
+    String id = sc.nextLine();
+    int sIndex = findStudentIndex(id);
+
+    if (sIndex == -1) {
+        System.out.println("Error: Student not found.");
+        return;
+    }
+
+    boolean found = false;
+
+    for (int j = 0; j < courses.size(); j++) {
+        if (enrollment[sIndex][j]) {
+            courses.get(j).displayCourse();
+            found = true;
+        }
+    }
+
+    if (!found) {
+        System.out.println("This student has no courses.");
+    }
+}
+    
+    /**
+ * Displays all students enrolled in a specific course.
+ *
+ * If no students are enrolled, display message.
+ */
+    
+    private void listStudentsByCourse() {
+    System.out.print("Enter Course Code: ");
+    String code = sc.nextLine();
+    int cIndex = findCourseIndex(code);
+
+    if (cIndex == -1) {
+        System.out.println("Error: Course not found.");
+        return;
+    }
+
+    boolean found = false;
+
+    for (int i = 0; i < students.size(); i++) {
+        if (enrollment[i][cIndex]) {
+            students.get(i).displayStudent();
+            found = true;
+        }
+    }
+
+    if (!found) {
+        System.out.println("No students enrolled in this course.");
+    }
+    }
+    
+    /**
+ * Displays last searched student and course.
+ *
+ * Acts as a simple search history feature.
+ */
+    
+   private void suggestLastSearch() {
+    if (lastSearchedStudent.isEmpty() && lastSearchedCourse.isEmpty()) {
+        System.out.println("No search history yet.");
+    } else {
+        System.out.println("Last searched student: " + lastSearchedStudent);
+        System.out.println("Last searched course: " + lastSearchedCourse);
+    }
+}
+   
+   /**
+ * Auto-suggestion feature based on course data.
+ *
+ * Function:
+ * - Searches course list based on input keyword
+ * - Matches course code and course name
+ * - Case-insensitive search
+ *
+ * Used to improve user experience (API feature).
+ */
+   
+  private void autoSuggest(String input) {
+    System.out.println("Suggestions:");
+
+    boolean found = false;
+
+    for (Course c : courses) {
+        if (c.getCourseCode().toLowerCase().contains(input.toLowerCase()) ||
+            c.getCourseName().toLowerCase().contains(input.toLowerCase())) {
+
+            System.out.println("- Course: " + c.getCourseCode());
+            found = true;
+        }
+    }
+
+    if (!found) {
+        System.out.println("No suggestions found.");
+    }
+}
 }
