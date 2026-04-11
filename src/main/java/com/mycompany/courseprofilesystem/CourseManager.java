@@ -36,6 +36,7 @@ import java.util.Scanner;
 class CourseManager {
     // Stores last searched student ID (for history feature)
     private String lastSearchedStudent = "";
+    
     // Stores last searched course code (for history feature)
     private String lastSearchedCourse = "";
     
@@ -48,7 +49,7 @@ class CourseManager {
     // Stores search history for API caching feature
     private ArrayList<String> searchCache = new ArrayList<>();
     
-    /// Relationship matrix:
+/// Relationship matrix:
 // enrollment[studentIndex][courseIndex] = true if student is enrolled
 private boolean[][] enrollment = new boolean[100][100];
 
@@ -63,7 +64,7 @@ private boolean[][] enrollment = new boolean[100][100];
         manager.run();  // Start the interactive menu
     }
 
-   /**
+/**
  * Main menu loop of the system.
  *
  * This method:
@@ -98,7 +99,6 @@ private boolean[][] enrollment = new boolean[100][100];
             
             System.out.print("Choose an option: ");
           
-
             /**
              * Input validation using while loop.
              * - Checks if the user entered an integer.
@@ -128,11 +128,17 @@ private boolean[][] enrollment = new boolean[100][100];
                 case 12: listCoursesByStudent(); break;
                 case 13: listStudentsByCourse(); break;
                 case 14: suggestLastSearch(); break;
+                
+                /** 
+                * Prompts user to enter keyword to be searched.
+                * Display possible searches.
+                */
                 case 15:
                 System.out.print("Enter keyword: ");
                 String input = sc.nextLine();
                 autoSuggest(input);
                 break;
+                    
                 case 0: System.out.println("Exiting program."); break;
                 default: System.out.println("Invalid choice!");
             }
@@ -229,6 +235,7 @@ private boolean[][] enrollment = new boolean[100][100];
 
     /**
      * Method: editCourse()
+    /**
  * Edits existing course information (except course code).
  *
  * Steps:
@@ -279,7 +286,8 @@ private boolean[][] enrollment = new boolean[100][100];
 
     /**
      * Method: deleteCourse()
-     * Deletes a course from the system.
+    /**
+ * Deletes a course from the system.
  *
  * Steps:
  * - Find course by code
@@ -301,7 +309,7 @@ private boolean[][] enrollment = new boolean[100][100];
         System.out.print("Confirm deletion? (Y/N): ");
         String confirm = sc.nextLine();
         
-        // remove enrollment relationships first
+// remove enrollment relationships first
 for (int i = 0; i < students.size(); i++) {
     enrollment[i][index] = false;
 }
@@ -330,12 +338,14 @@ for (int i = 0; i < students.size(); i++) {
 }
     /**
      * Method: viewAllCourses()
+    /**
  * Displays all courses in the system.
  *
  * If no courses exist, display appropriate message.
  */
     private void viewAllCourses() {
-        /**check for all courses created and courses available in the database.
+        /**
+        * check for all courses created and courses available in the database.
         * if empty/none available, display the following message
         * if courses exists, display all courses created.
         */
@@ -351,7 +361,8 @@ for (int i = 0; i < students.size(); i++) {
 
     /**
      * Method: findCourseIndex()
-      * Finds the index of a course in the ArrayList.
+    /** 
+ * Finds the index of a course in the ArrayList.
  *
  * Returns:
  * - Index if found
