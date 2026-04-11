@@ -336,6 +336,7 @@ for (int i = 0; i < students.size(); i++) {
         System.out.println("Course not found.");
     }
 }
+    
     /**
      * Method: viewAllCourses()
     /**
@@ -386,7 +387,8 @@ for (int i = 0; i < students.size(); i++) {
     
      /**
      * Method: addStudent()
-     * Adds a new student to the system.
+     /**
+ * Adds a new student to the system.
  *
  * Steps:
  * - Get student details from user
@@ -429,7 +431,8 @@ if (findStudentIndex(id) != -1) {
 
      /**
      * Method: searchStudent()
-     * Searches a student using student ID.
+     /**
+ * Searches a student using student ID.
  *
  * Features:
  * - Updates search history cache
@@ -453,7 +456,8 @@ if (findStudentIndex(id) != -1) {
     }
   /**
      * Method: editStudent()
-     * Updates student information.
+  /**
+ * Updates student information.
  *
  * Allows user to modify:
  * - First name
@@ -496,7 +500,8 @@ if (findStudentIndex(id) != -1) {
 
     /**
      * Method: deleteStudent()
-    * Deletes a student from the system.
+    /**
+ * Deletes a student from the system.
  *
  * Steps:
  * - Find student by ID
@@ -547,7 +552,7 @@ if (findStudentIndex(id) != -1) {
         System.out.println("Student not found.");
     }
 }
-     /**
+    /**
      * Method: viewAllStudents()
     /**
  * Displays all students in the system.
@@ -556,7 +561,8 @@ if (findStudentIndex(id) != -1) {
  */
     
     private void viewAllStudents() {
-        /**check for all students available in the database.
+        /**
+        * check for all students available in the database.
         * if empty/none available, display the following message
         * if students exists, display all students' information.
         */
@@ -572,7 +578,8 @@ if (findStudentIndex(id) != -1) {
 
     /**
      * Method: findStudentIndex()
-      * Finds a student index using student ID.
+    /**
+ * Finds a student index using student ID.
  *
  * Returns:
  * - Index if found
@@ -593,7 +600,10 @@ if (findStudentIndex(id) != -1) {
     }
     
     /**
-     * Assigns a course to a student.
+    * Method: assignCourseToStudent()
+    /**
+     
+ * Assigns a course to a student.
  *
  * Validation:
  * - Student must exist
@@ -602,64 +612,68 @@ if (findStudentIndex(id) != -1) {
  *
  * Updates enrollment matrix.
  */
-   private void assignCourseToStudent() {
-    System.out.print("Enter Student ID: ");
-    String studentId = sc.nextLine();
-    int sIndex = findStudentIndex(studentId);
+    private void assignCourseToStudent() {
+        System.out.print("Enter Student ID: ");
+        String studentId = sc.nextLine();
+        int sIndex = findStudentIndex(studentId);
 
-    if (sIndex == -1) {
-        System.out.println("Error: Student not found.");
-        return;
+        if (sIndex == -1) {
+            System.out.println("Error: Student not found.");
+            return;
+        }
+
+        System.out.print("Enter Course Code: ");
+        String courseCode = sc.nextLine();
+        int cIndex = findCourseIndex(courseCode);
+
+        if (cIndex == -1) {
+            System.out.println("Error: Course not found.");
+            return;
+        }
+
+        if (enrollment[sIndex][cIndex]) {
+            System.out.println("Error: Student already enrolled in this course.");
+            return;
+        }
+
+        // if NOT enrolled yet → assign
+        enrollment[sIndex][cIndex] = true;
+        System.out.println("Success: Course assigned to student.");
     }
-
-    System.out.print("Enter Course Code: ");
-    String courseCode = sc.nextLine();
-    int cIndex = findCourseIndex(courseCode);
-
-    if (cIndex == -1) {
-        System.out.println("Error: Course not found.");
-        return;
-    }
-
-    if (enrollment[sIndex][cIndex]) {
-        System.out.println("Error: Student already enrolled in this course.");
-        return;
-    }
-
-    // if NOT enrolled yet → assign
-    enrollment[sIndex][cIndex] = true;
-    System.out.println("Success: Course assigned to student.");
-}
    
+   /**
+   * Method: ListCoursesByStudent()
    /**
  * Displays all courses assigned to a specific student.
  *
  * If student has no courses, display message.
  */
     private void listCoursesByStudent() {
-    System.out.print("Enter Student ID: ");
-    String id = sc.nextLine();
-    int sIndex = findStudentIndex(id);
+        System.out.print("Enter Student ID: ");
+        String id = sc.nextLine();
+        int sIndex = findStudentIndex(id);
 
-    if (sIndex == -1) {
-        System.out.println("Error: Student not found.");
-        return;
-    }
+        if (sIndex == -1) {
+            System.out.println("Error: Student not found.");
+            return;
+        }
 
-    boolean found = false;
+        boolean found = false;
 
-    for (int j = 0; j < courses.size(); j++) {
-        if (enrollment[sIndex][j]) {
-            courses.get(j).displayCourse();
-            found = true;
+        for (int j = 0; j < courses.size(); j++) {
+            if (enrollment[sIndex][j]) {
+                courses.get(j).displayCourse();
+                found = true;
+            }
+        }
+
+        if (!found) {
+            System.out.println("This student has no courses.");
         }
     }
-
-    if (!found) {
-        System.out.println("This student has no courses.");
-    }
-}
     
+    /**
+    * Method: ListStudentsByCourse()
     /**
  * Displays all students enrolled in a specific course.
  *
@@ -667,29 +681,31 @@ if (findStudentIndex(id) != -1) {
  */
     
     private void listStudentsByCourse() {
-    System.out.print("Enter Course Code: ");
-    String code = sc.nextLine();
-    int cIndex = findCourseIndex(code);
+        System.out.print("Enter Course Code: ");
+        String code = sc.nextLine();
+        int cIndex = findCourseIndex(code);
 
-    if (cIndex == -1) {
-        System.out.println("Error: Course not found.");
-        return;
-    }
+        if (cIndex == -1) {
+            System.out.println("Error: Course not found.");
+            return;
+        }
 
-    boolean found = false;
+        boolean found = false;
 
-    for (int i = 0; i < students.size(); i++) {
-        if (enrollment[i][cIndex]) {
-            students.get(i).displayStudent();
-            found = true;
+        for (int i = 0; i < students.size(); i++) {
+            if (enrollment[i][cIndex]) {
+                students.get(i).displayStudent();
+                found = true;
+            }
+        }
+
+        if (!found) {
+            System.out.println("No students enrolled in this course.");
         }
     }
-
-    if (!found) {
-        System.out.println("No students enrolled in this course.");
-    }
-    }
     
+    /**
+    * Method: SuggestLastSearch()
     /**
  * Displays last searched student and course.
  *
@@ -697,14 +713,16 @@ if (findStudentIndex(id) != -1) {
  */
     
    private void suggestLastSearch() {
-    if (lastSearchedStudent.isEmpty() && lastSearchedCourse.isEmpty()) {
-        System.out.println("No search history yet.");
-    } else {
-        System.out.println("Last searched student: " + lastSearchedStudent);
-        System.out.println("Last searched course: " + lastSearchedCourse);
-    }
-}
+       if (lastSearchedStudent.isEmpty() && lastSearchedCourse.isEmpty()) {
+           System.out.println("No search history yet.");
+       } else {
+           System.out.println("Last searched student: " + lastSearchedStudent);
+           System.out.println("Last searched course: " + lastSearchedCourse);
+       }
+   }
    
+   /**
+   * Method: AutoSuggest()
    /**
  * Auto-suggestion feature based on course data.
  *
@@ -717,21 +735,21 @@ if (findStudentIndex(id) != -1) {
  */
    
   private void autoSuggest(String input) {
-    System.out.println("Suggestions:");
+      System.out.println("Suggestions:");
 
-    boolean found = false;
+      boolean found = false;
 
-    for (Course c : courses) {
-        if (c.getCourseCode().toLowerCase().contains(input.toLowerCase()) ||
-            c.getCourseName().toLowerCase().contains(input.toLowerCase())) {
+      for (Course c : courses) {
+          if (c.getCourseCode().toLowerCase().contains(input.toLowerCase()) ||
+              c.getCourseName().toLowerCase().contains(input.toLowerCase())) {
 
-            System.out.println("- Course: " + c.getCourseCode());
-            found = true;
-        }
-    }
+              System.out.println("- Course: " + c.getCourseCode());
+              found = true;
+          }
+      }
 
-    if (!found) {
-        System.out.println("No suggestions found.");
-    }
-}
+      if (!found) {
+          System.out.println("No suggestions found.");
+      }
+  }
 }
