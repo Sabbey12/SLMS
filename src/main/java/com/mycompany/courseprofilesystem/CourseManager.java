@@ -89,7 +89,7 @@ private boolean[][] enrollment = new boolean[100][100];
             System.out.println("8. Edit Student");
             System.out.println("9. Delete Student");
             System.out.println("10. View All Students");
-             System.out.println("11. Assign Course to Student");
+            System.out.println("11. Assign Course to Student");
             System.out.println("12. View Student Courses");
             System.out.println("13. View Course Students");
             System.out.println("14. Suggest Last Search");
