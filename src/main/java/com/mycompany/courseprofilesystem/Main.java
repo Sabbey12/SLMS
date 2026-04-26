@@ -71,7 +71,7 @@ public class Main {
                 case 1: courseManager.addCourse(); break;
                 case 2: courseManager.searchCourse(); break;
                 case 3: courseManager.editCourse(); break;
-                case 4: courseManager.deleteCourse(); break;
+                case 4: courseManager.deleteCourse(studentManager); break;
                 case 5: courseManager.viewAllCourses(); break;
 
                 case 6: studentManager.addStudent(); break;
