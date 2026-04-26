@@ -1,11 +1,9 @@
 /**
  * File: Course.java
- * Author: Team SLMS (Group 3)
+ * Author: Team SLMS (Group 4)
  * Description: Handles individual course data and provides methods to display it.
  * Date: 02 Mar 2026
  */
-
-package com.mycompany.courseprofilesystem;
 
 /**
  * Class: Course
