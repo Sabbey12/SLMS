@@ -102,12 +102,11 @@ public class CourseManager {
         // Add when all fields are valid
         courses.add(new Course(name, code, credit, summary, link));
         System.out.println("Course added successfully!");
-}
+    }
 
     /**
      * Method: searchCourse()
-     * 
-     * Searches a course using course code.
+     * * Searches a course using course code.
      *
      * Features:
      * - Stores search history (cache)
@@ -209,65 +208,65 @@ public class CourseManager {
      * - Remove course from ArrayList
      * - Clear all student-course relationships
      */
-    public void deleteCourse() {
-    System.out.print("Enter Course Code to delete: ");
-    String code = sc.nextLine();
+    public void deleteCourse(StudentManager sm) {
+        System.out.print("Enter Course Code to delete: ");
+        String code = sc.nextLine();
 
-    // Prevent blank input
-    if (code.trim().isEmpty()) {
-        System.out.println("Course code cannot be empty!");
-        return;
-    }
-
-    int index = findCourseIndex(code);
-
-    if (index != -1) {
-
-        System.out.println("Course found:");
-        courses.get(index).displayCourse();
-
-        String confirm;
-        while (true) {
-            System.out.print("Confirm deletion? (Y/N): ");
-            confirm = sc.nextLine();
-
-            // Prevent blank input
-            if (confirm.trim().isEmpty()) {
-                System.out.println("Confirmation cannot be empty!");
-            } else if (confirm.equalsIgnoreCase("Y") || confirm.equalsIgnoreCase("N")) {
-                break;
-            } else {
-                System.out.println("Invalid input! Please enter Y or N only.");
-            }
+        // Prevent blank input
+        if (code.trim().isEmpty()) {
+            System.out.println("Course code cannot be empty!");
+            return;
         }
 
-        // Remove enrollment relationships for this course first
-        for (int i = 0; i < students.size(); i++) {
-            enrollment[i][index] = false;
-        }
+        int index = findCourseIndex(code);
 
-        if (confirm.equalsIgnoreCase("Y")) {
+        if (index != -1) {
 
-            // Remove course from list
-            courses.remove(index);
+            System.out.println("Course found:");
+            courses.get(index).displayCourse();
 
-            // Clear and reset enrollment matrix safely
-            for (int i = 0; i < students.size(); i++) {
-                for (int j = 0; j < courses.size(); j++) {
-                    enrollment[i][j] = false;
+            String confirm;
+            while (true) {
+                System.out.print("Confirm deletion? (Y/N): ");
+                confirm = sc.nextLine();
+
+                // Prevent blank input
+                if (confirm.trim().isEmpty()) {
+                    System.out.println("Confirmation cannot be empty!");
+                } else if (confirm.equalsIgnoreCase("Y") || confirm.equalsIgnoreCase("N")) {
+                    break;
+                } else {
+                    System.out.println("Invalid input! Please enter Y or N only.");
                 }
             }
 
-            System.out.println("Course deleted successfully!");
+            if (confirm.equalsIgnoreCase("Y")) {
+                // Remove enrollment relationships for this course first
+                // Use sm parameter to access student list
+                for (int i = 0; i < sm.getStudents().size(); i++) {
+                    enrollment[i][index] = false;
+                }
+
+                // Remove course from list
+                courses.remove(index);
+
+                // Clear and reset enrollment matrix safely
+                for (int i = 0; i < sm.getStudents().size(); i++) {
+                    for (int j = 0; j < courses.size(); j++) {
+                        enrollment[i][j] = false;
+                    }
+                }
+
+                System.out.println("Course deleted successfully!");
+
+            } else {
+                System.out.println("Deletion cancelled.");
+            }
 
         } else {
-            System.out.println("Deletion cancelled.");
+            System.out.println("Course not found.");
         }
-
-    } else {
-        System.out.println("Course not found.");
     }
-}
 
     /**
      * Method: viewAllCourses()
@@ -276,11 +275,6 @@ public class CourseManager {
      * If no courses exist, display appropriate message.
      */
     public void viewAllCourses() {
-        /**
-         * check for all courses created and courses available in the database.
-         * if empty/none available, display the following message
-         * if courses exists, display all courses created.
-         */
         if (courses.isEmpty()) {
             System.out.println("No courses available.");
         } else {
@@ -293,8 +287,7 @@ public class CourseManager {
 
     /**
      * Method: findCourseIndex()
-     * 
-     * Finds the index of a course in the ArrayList.
+     * * Finds the index of a course in the ArrayList.
      *
      * Returns:
      * - Index if found
