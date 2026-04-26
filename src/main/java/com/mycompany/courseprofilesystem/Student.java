@@ -1,11 +1,9 @@
 /**
  * File: Student.java
- * Author: Team SLMS (Group 3)
+ * Author: Team SLMS (Group 4)
  * Description: Handles individual student data and provides methods to display it.
  * Date: 17 Mar 2026
  */
-
-package com.mycompany.courseprofilesystem;
 
 /**
  * Class: Student
